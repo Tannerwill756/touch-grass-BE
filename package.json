@@ -21,7 +21,8 @@
   "homepage": "https://github.com/Tannerwill756/touch-grass-BE#readme",
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "prettier": "^2.6.2"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -31,6 +32,7 @@
     "express-session": "^1.17.2",
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^2.0.0"
+    "knex": "^2.0.0",
+    "mongoose": "^6.3.2"
   }
 }
