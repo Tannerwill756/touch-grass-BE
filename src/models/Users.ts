@@ -4,6 +4,10 @@ export interface IUser {
     username: string;
     password: string;
     address: string;
+    totalEarnings: number;
+    winRate: number;
+    activeScorecards: Array<any>;
+    invitedScorecards: Array<string>;
 }
 
 export interface IUserModel extends IUser, Document {}
@@ -15,7 +19,8 @@ const UserSchema: Schema = new Schema(
         address: { type: String, required: true },
         totalEarnings: { type: Number },
         winRate: { type: Number },
-        activeScorecards: { type: Array }
+        activeScorecards: { type: Array },
+        invitedScorecards: { type: Array }
     },
     {
         versionKey: false

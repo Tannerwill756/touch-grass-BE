@@ -26,7 +26,11 @@ export const Schemas = {
         update: Joi.object<IUser>({
             username: Joi.string(),
             password: Joi.string(),
-            address: Joi.string()
+            address: Joi.string(),
+            totalEarnings: Joi.string(),
+            winRate: Joi.string(),
+            activeScorecards: Joi.string(),
+            invitedScorecards: Joi.string()
         })
     }
 };

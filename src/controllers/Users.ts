@@ -24,6 +24,13 @@ const readUser = (req: Request, res: Response, next: NextFunction) => {
         .then((user) => (user ? res.status(200).json({ user }) : res.status(404).json({ message: 'User not found' })))
         .catch((error) => res.status(500).json({ error }));
 };
+const getUserByUsername = (req: Request, res: Response, next: NextFunction) => {
+    const username = req.params.username;
+
+    return Users.findOne({ username: username })
+        .then((user) => (user ? res.status(200).json({ user: user.username }) : res.status(404).json({ message: 'User not found' })))
+        .catch((error) => res.status(500).json({ error }));
+};
 const readAll = (req: Request, res: Response, next: NextFunction) => {
     return Users.find()
         .then((users) => res.status(200).json({ users }))
@@ -35,7 +42,13 @@ const updateUser = (req: Request, res: Response, next: NextFunction) => {
     return Users.findById(userID)
         .then((user) => {
             if (user) {
-                user.set(req.body);
+                if (req.body.activeScorecards) {
+                    console.log([...user.activeScorecards, req.body.activeScorecards]);
+                    console.log('reqbody', req.body);
+                    let newActiveArray = [...user.activeScorecards, req.body.activeScorecards];
+                    user.set(newActiveArray);
+                }
+                // user.set(req.body);
 
                 return user
                     .save()
@@ -55,4 +68,4 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-export default { createUser, readUser, readAll, updateUser, deleteUser };
+export default { createUser, readUser, getUserByUsername, readAll, updateUser, deleteUser };

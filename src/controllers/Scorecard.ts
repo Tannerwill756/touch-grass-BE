@@ -3,10 +3,13 @@ import mongoose from 'mongoose';
 import Scorecard from '../models/Scorecard';
 
 const CreateScorecard = (req: Request, res: Response, next: NextFunction) => {
-    const { players, scores } = req.body;
+    const { creator, pricePerHole, numHoles, players, scores } = req.body;
 
     const scorecard = new Scorecard({
         _id: new mongoose.Types.ObjectId(),
+        creator,
+        pricePerHole,
+        numHoles,
         players,
         scores
     });
@@ -32,9 +35,7 @@ const GetAllScorecards = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const UpdateScorecard = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.params);
     const cardID = req.params.cardId;
-    console.log(req.params);
 
     return Scorecard.findById(cardID)
         .then((card) => {

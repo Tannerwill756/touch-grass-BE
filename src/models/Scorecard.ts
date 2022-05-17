@@ -9,6 +9,9 @@ export interface IScorecardModel extends IScorecard, Document {}
 
 const ScorecardSchema: Schema = new Schema(
     {
+        creator: { type: String },
+        pricePerHole: { type: Number, required: true },
+        numHoles: { type: Number, required: true },
         players: { type: Array, required: true },
         scores: { type: Object }
     },
