@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Scorecard from '../models/Scorecard';
 
 const CreateScorecard = (req: Request, res: Response, next: NextFunction) => {
-    const { creator, pricePerHole, numHoles, players, scores } = req.body;
+    const { creator, pricePerHole, numHoles, players, scores, isFinished } = req.body;
 
     const scorecard = new Scorecard({
         _id: new mongoose.Types.ObjectId(),
@@ -11,7 +11,8 @@ const CreateScorecard = (req: Request, res: Response, next: NextFunction) => {
         pricePerHole,
         numHoles,
         players,
-        scores
+        scores,
+        isFinished
     });
 
     return scorecard
