@@ -27,7 +27,7 @@ export const Schemas = {
             username: Joi.string(),
             password: Joi.string(),
             address: Joi.string(),
-            totalEarnings: Joi.string(),
+            totalEarnings: Joi.number(),
             winRate: Joi.string(),
             activeScorecards: Joi.string(),
             invitedScorecards: Joi.string()
