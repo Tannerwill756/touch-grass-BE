@@ -11,11 +11,18 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         password,
         address
     });
-
-    return user
-        .save()
-        .then((user) => res.status(201).json({ user }))
-        .catch((error) => res.status(500).json({ error }));
+    let checkUsername = user.username;
+    return Users.findOne({ username: checkUsername }, (err: any, data: any) => {
+        if (data === null) {
+            user.save()
+                .then((user) => {
+                    res.status(201).json({ user });
+                })
+                .catch((error) => res.status(500).json({ error }));
+        } else {
+            res.status(404).json({ message: 'User Already exists' });
+        }
+    });
 };
 const readUser = (req: Request, res: Response, next: NextFunction) => {
     const userID = req.params.userId;
