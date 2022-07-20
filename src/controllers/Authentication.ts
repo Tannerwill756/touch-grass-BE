@@ -18,12 +18,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('refresh_token', refreshToken, {
-            httpOnly: process.env.NODE_ENV !== 'development',
-            secure: false
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
         });
         res.cookie('access_token', token, {
-            httpOnly: process.env.NODE_ENV !== 'development',
-            secure: false
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
         });
         return res.status(200).json({ status: 'Login success', id: user._id, username: user.username, access_token: token });
     } else {
@@ -32,6 +34,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const refreshToken = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.cookies.refresh_token) return res.status(400).json({ message: 'no refresh token found' });
     const refreshToken = req.cookies.refresh_token;
 
     jwt.verify(refreshToken, String(process.env.JWT_REFRESH_SECRET), (err: any, decode: any) => {
@@ -45,12 +48,14 @@ const refreshToken = (req: Request, res: Response, next: NextFunction) => {
             const token = generateToken(user);
             const refreshToken = req.cookies.refresh_token;
             res.cookie('access_token', token, {
-                httpOnly: process.env.NODE_ENV !== 'development',
-                secure: false
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true
             });
             res.cookie('refresh_token', refreshToken, {
-                httpOnly: process.env.NODE_ENV !== 'development',
-                secure: false
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true
             });
             res.status(200).json({
                 status: 'Token refreshed successfully',
@@ -83,6 +88,14 @@ const register = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
+const logout = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.cookies.access_token) return res.sendStatus(204);
+
+    res.clearCookie('access_token', { httpOnly: true, sameSite: 'none', secure: true });
+    res.clearCookie('refresh_token', { httpOnly: true, sameSite: 'none', secure: true });
+    res.sendStatus(204);
+};
+
 function generateToken(user: userInterface) {
     const payload = {
         id: user._id,
@@ -107,4 +120,4 @@ function generateRefreshToken(user: userInterface) {
     return jwt.sign(payload, secret, options);
 }
 
-export default { login, register, refreshToken };
+export default { login, register, refreshToken, logout };
