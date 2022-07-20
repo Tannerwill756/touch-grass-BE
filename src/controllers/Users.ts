@@ -11,7 +11,7 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         password,
         address
     });
-    let checkUsername = user.username;
+    const checkUsername = user.username;
     return Users.findOne({ username: checkUsername }, (err: any, data: any) => {
         if (data === null) {
             user.save()

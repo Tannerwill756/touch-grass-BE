@@ -1,8 +1,10 @@
-import express, { Router } from 'express';
+import express, { application, Router } from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/Logging';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 /* Imported Routes */
 import userRoutes from './routes/User';
@@ -41,17 +43,18 @@ const startServer = () => {
     router.use(express.json());
 
     /* Rules of our API */
-    router.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
-        if (req.method == 'OPTIONS') {
-            res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-            return res.status(200).json({});
-        }
+    const host = process.env.NODE_ENV !== 'development' ? process.env.HOSTED_SITE : process.env.LOCAL_HOST;
 
-        next();
-    });
+    router.use(
+        cors({
+            origin: host,
+            methods: ['PUT', 'POST', 'PATCH', 'DELETE', 'GET'],
+            credentials: true
+        })
+    );
+
+    router.use(cookieParser());
 
     /* Routes */
     router.use('/users', userRoutes);
