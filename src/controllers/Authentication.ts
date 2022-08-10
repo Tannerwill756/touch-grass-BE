@@ -59,7 +59,9 @@ const refreshToken = (req: Request, res: Response, next: NextFunction) => {
             });
             res.status(200).json({
                 status: 'Token refreshed successfully',
-                access_token: token
+                access_token: token,
+                id: user._id,
+                username: user.username
             });
         }
     });

@@ -29,8 +29,7 @@ export const Schemas = {
             address: Joi.string(),
             totalEarnings: Joi.number(),
             winRate: Joi.string(),
-            activeScorecards: Joi.string(),
-            invitedScorecards: Joi.string()
+            activeScorecards: Joi.array().items(Joi.string())
         })
     }
 };

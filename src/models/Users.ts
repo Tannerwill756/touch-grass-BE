@@ -20,8 +20,7 @@ const UserSchema: Schema = new Schema(
         refreshToken: { type: String },
         totalEarnings: { type: Number },
         winRate: { type: Number },
-        activeScorecards: { type: Array },
-        invitedScorecards: { type: Array }
+        activeScorecards: [String]
     },
     {
         versionKey: false

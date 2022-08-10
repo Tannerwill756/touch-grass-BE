@@ -35,7 +35,11 @@ const getUserByUsername = (req: Request, res: Response, next: NextFunction) => {
     const username = req.params.username;
 
     return Users.findOne({ username: username })
-        .then((user) => (user ? res.status(200).json({ id: user.id, user: user.username, totalEarnings: user.totalEarnings }) : res.status(404).json({ message: 'User not found' })))
+        .then((user) =>
+            user
+                ? res.status(200).json({ id: user.id, user: user.username, email: user.address, totalEarnings: user.totalEarnings, activeScorecards: user.activeScorecards })
+                : res.status(404).json({ message: 'User not found' })
+        )
         .catch((error) => res.status(500).json({ error }));
 };
 
@@ -46,12 +50,10 @@ const readAll = (req: Request, res: Response, next: NextFunction) => {
 };
 const updateUser = (req: Request, res: Response, next: NextFunction) => {
     const userID = req.params.userId;
-
     return Users.findById(userID)
         .then((user) => {
             if (user) {
                 user.set(req.body);
-
                 return user
                     .save()
                     .then((user) => res.status(201).json({ user }))

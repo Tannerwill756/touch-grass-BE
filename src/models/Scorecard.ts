@@ -12,9 +12,12 @@ const ScorecardSchema: Schema = new Schema(
         creator: { type: String },
         pricePerHole: { type: Number, required: true },
         numHoles: { type: Number, required: true },
-        players: { type: Array, required: true },
+        players: { type: Array },
         scores: { type: Object },
-        isFinished: { type: Boolean, required: true }
+        status: { type: String, required: true },
+        accessCode: { type: String },
+        setNumberOfPlayers: { type: Number },
+        results: { type: Object }
     },
     {
         timestamps: true

@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/User';
 import scorecardRoutes from './routes/Scorecard';
 import authenticationRoutes from './routes/Authentication';
+import paypalRoutes from './routes/Paypal';
 
 const router = express();
 
@@ -60,6 +61,7 @@ const startServer = () => {
     router.use('/users', userRoutes);
     router.use('/scorecards', scorecardRoutes);
     router.use('/auth', authenticationRoutes);
+    router.use('/paypal', paypalRoutes);
 
     /* Healthcheck */
     router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
