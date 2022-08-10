@@ -82,6 +82,7 @@ const Payout = async (req: Request, res: Response, next: NextFunction) => {
                     console.log('token expired getting new token');
                     await PayPalAuthToken();
                     console.log('go the new token');
+                    Payout(req, res, next);
                 }
                 if (error.response.status === 400) res.status(400).json({ message: 'Payout for this card has already been submitted' });
                 return;

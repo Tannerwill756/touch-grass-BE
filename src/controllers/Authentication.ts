@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Users from '../models/Users';
 import jwt, { verify } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 interface userInterface {
     _id: string;
@@ -10,10 +11,9 @@ interface userInterface {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
     const user = await Users.findOne({
-        username: req.body.username,
-        password: req.body.password
+        username: req.body.username
     });
-    if (user && user.password === req.body.password) {
+    if (user && (await bcrypt.compare(req.body.password, String(user?.password)))) {
         const token = generateToken(user);
         const refreshToken = generateRefreshToken(user);
 
@@ -67,8 +67,12 @@ const refreshToken = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const register = (req: Request, res: Response, next: NextFunction) => {
-    const { username, password, address } = req.body;
+const register = async (req: Request, res: Response, next: NextFunction) => {
+    const { username, address } = req.body;
+    let { password } = req.body;
+
+    const salt = await bcrypt.genSalt(10);
+    password = await bcrypt.hash(password, salt);
 
     const user = new Users({
         _id: new mongoose.Types.ObjectId(),
@@ -76,18 +80,16 @@ const register = (req: Request, res: Response, next: NextFunction) => {
         password,
         address
     });
-    const checkUsername = user.username;
-    return Users.findOne({ username: checkUsername }, (err: any, data: any) => {
-        if (data === null) {
-            user.save()
-                .then((user) => {
-                    res.status(201).json({ user });
-                })
-                .catch((error) => res.status(500).json({ error }));
-        } else {
-            res.status(404).json({ message: 'User Already exists' });
-        }
-    });
+    const data = await Users.findOne({ username: user.username });
+    if (data === null) {
+        user.save()
+            .then((user) => {
+                res.status(201).json({ user });
+            })
+            .catch((error) => res.status(500).json({ error }));
+    } else {
+        res.status(404).json({ message: 'User Already exists' });
+    }
 };
 
 const logout = (req: Request, res: Response, next: NextFunction) => {
