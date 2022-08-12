@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
+import CryptoJS from 'crypto-js';
 import PayPalAuthToken from '../middleware/PaypalAuthToken';
 import ScoreComparer from '../middleware/ScoreComparer';
 import Paypal from '../models/Paypal';
@@ -49,8 +50,11 @@ const Payout = async (req: Request, res: Response, next: NextFunction) => {
         items: payoutArr
     };
     let authToken = '';
-    await Paypal.find().then((res) => (authToken = res[0].token));
-    console.log('data sending  to paypal', json_data);
+    await Paypal.find().then((res) => {
+        const bytes = CryptoJS.AES.decrypt(res[0].token, String(process.env.PAYPAL_AUTH_ENCRYPTION_SECRET));
+        authToken = bytes.toString(CryptoJS.enc.Utf8);
+    });
+
     try {
         axios
             .post('https://api-m.sandbox.paypal.com/v1/payments/payouts', json_data, {
@@ -73,14 +77,13 @@ const Payout = async (req: Request, res: Response, next: NextFunction) => {
                 }
             })
             .catch(async (error) => {
-                console.log('Payout ERROR', console.log(error));
                 if (error.response.data.name === 'INSUFFICIENT_FUNDS') {
                     res.status(500).json({ message: 'Please contact customer support', error: error.response.data });
                 }
                 if (error.response.status === 401) {
                     // Then we need to fetch for a new authentication token and recall payout function
                     console.log('token expired getting new token');
-                    await PayPalAuthToken();
+
                     console.log('go the new token');
                     Payout(req, res, next);
                 }

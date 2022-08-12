@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Paypal from '../models/Paypal';
-// import { NextFunction, Request, Response } from 'express';
+import CryptoJS from 'crypto-js';
 
 const PayPalAuthToken = async () => {
     try {
@@ -17,8 +17,10 @@ const PayPalAuthToken = async () => {
             }
         );
 
+        const ciphertext = CryptoJS.AES.encrypt(response.data.access_token, String(process.env.PAYPAL_AUTH_ENCRYPTION_SECRET)).toString();
+
         const newToken = new Paypal({
-            token: response.data.access_token
+            token: ciphertext
         });
 
         const result = await Paypal.find().exec();
