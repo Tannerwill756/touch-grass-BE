@@ -1,14 +1,13 @@
 import express from 'express';
 import controller from '../controllers/Users';
 import { ValidateSchema, Schemas } from '../middleware/ValidateSchame';
+import { verifyToken } from '../middleware/VerifyToken';
 
 const router = express.Router();
 
-router.post('/createUser', ValidateSchema(Schemas.user.create), controller.createUser);
-router.get('/getUser/:userId', controller.readUser);
-router.get('/getUsers', controller.readAll);
-router.get('/getUserByUsername/:username', controller.getUserByUsername);
-router.patch('/updateUser/:userId', ValidateSchema(Schemas.user.update), controller.updateUser);
-router.delete('/deleteUser/:userId', controller.deleteUser);
+router.get('/getUser/:userId', verifyToken, controller.readUser);
+router.get('/getUserByUsername/:username', verifyToken, controller.getUserByUsername);
+router.patch('/updateUser/:userId', verifyToken, ValidateSchema(Schemas.user.update), controller.updateUser);
+router.delete('/deleteUser/:userId', verifyToken, controller.deleteUser);
 
 export = router;

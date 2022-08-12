@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const verifyToken = (req: any, res: Response, next: NextFunction) => {
-    console.log();
     try {
         // Bearer tokenstring
         const token = req.cookies.access_token;
